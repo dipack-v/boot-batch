@@ -10,8 +10,12 @@ import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.mail.MailException;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 
 public class JobCompletionNotificationListener extends JobExecutionListenerSupport {
 
@@ -23,6 +27,17 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
 	public JobCompletionNotificationListener(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
+	
+	/*@Value("${send.from.email}")
+    private String fromEmail;
+
+    @Value("${send.to.email}")
+    private String toEmail;
+
+	@Autowired
+	private MailSender mailSender;
+
+	private SimpleMailMessage templateMessage;*/
 
 	@Override
 	public void afterJob(JobExecution jobExecution) {
@@ -39,7 +54,26 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
 			for (Person person : results) {
 				log.info("Found <" + person + "> in the database.");
 			}
+			
+			
+			/*this.templateMessage = new SimpleMailMessage();
 
+	        this.templateMessage.setSubject("Dinner Party");
+	        this.templateMessage.setFrom(this.fromEmail);
+	        this.templateMessage.setTo(this.toEmail);
+
+	        SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
+	        msg.setText("Please come for dinner tonight.");
+
+	        try{
+	            this.mailSender.send(msg);
+	        }
+	        catch(MailException ex){
+	      
+	            System.err.println(ex.getMessage());
+	        }
+	        System.out.println("Finished Send...");*/
+	      
 		}
 	}
 }
