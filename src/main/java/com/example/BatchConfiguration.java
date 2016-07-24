@@ -82,13 +82,23 @@ public class BatchConfiguration {
         return jobBuilderFactory.get("importUserJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener())
-                .flow(step1())
+                .flow(step1()).next(step2())
                 .end()
                 .build();
     }
 
     @Bean
     public Step step1() {
+        return stepBuilderFactory.get("step1")
+                .<Person, Person> chunk(10).faultTolerant().skip(ItemStreamException.class)
+                .reader(reader())
+                .processor(processor())
+                .writer(writer())
+                .build();
+    }
+    
+    @Bean
+    public Step step2() {
         return stepBuilderFactory.get("step1")
                 .<Person, Person> chunk(10).faultTolerant().skip(ItemStreamException.class)
                 .reader(reader())
