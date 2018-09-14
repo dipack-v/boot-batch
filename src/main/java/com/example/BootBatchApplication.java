@@ -3,6 +3,7 @@ package com.example;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.camel.builder.RouteBuilder;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -25,17 +26,27 @@ public class BootBatchApplication {
 @EnableScheduling
 class ScheduledTasks {
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-    
-    @Autowired
-    JobLauncher jobLauncher;
-    
-    @Autowired
-    Job job;
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
-    @Scheduled(cron = "*/60 * * * * *")
-    public void runJob() throws Exception {
-        System.out.println("Job going to start now " + dateFormat.format(new Date()));
-        jobLauncher.run(job, new JobParameters());
-    }
+	@Autowired
+	JobLauncher jobLauncher;
+
+	@Autowired
+	Job job;
+
+	// @Scheduled(cron = "*/60 * * * * *")
+	public void runJob() throws Exception {
+		System.out.println("Job going to start now " + dateFormat.format(new Date()));
+		jobLauncher.run(job, new JobParameters());
+	}
+}
+
+@Component
+class FilePollerRoute extends RouteBuilder {
+	public static final String ROUTE_NAME = "TIMER_ROUTE";
+
+	@Override
+	public void configure() throws Exception {
+		from("file:src/main/resources?include=.*.csv&noop=true").to("spring-batch:importUserJob");
+	}
 }
