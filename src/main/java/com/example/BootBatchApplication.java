@@ -6,6 +6,7 @@ import java.util.Date;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -34,10 +35,12 @@ class ScheduledTasks {
 	@Autowired
 	Job job;
 
-	// @Scheduled(cron = "*/60 * * * * *")
+	//@Scheduled(cron = "*/60 * * * * *")
 	public void runJob() throws Exception {
 		System.out.println("Job going to start now " + dateFormat.format(new Date()));
-		jobLauncher.run(job, new JobParameters());
+		JobParametersBuilder jobParameterBuilder = new JobParametersBuilder();
+		jobParameterBuilder.addString("CamelFileName", "sample-data.csv");
+		jobLauncher.run(job, jobParameterBuilder.toJobParameters());
 	}
 }
 
