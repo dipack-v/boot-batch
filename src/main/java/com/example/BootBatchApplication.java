@@ -46,7 +46,6 @@ class ScheduledTasks {
 
 @Component
 class FilePollerRoute extends RouteBuilder {
-	public static final String ROUTE_NAME = "TIMER_ROUTE";
 
 	@Override
 	public void configure() throws Exception {
